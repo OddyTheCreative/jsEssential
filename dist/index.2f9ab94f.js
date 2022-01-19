@@ -519,20 +519,38 @@ function hmrAcceptRun(bundle, id) {
 }
 
 },{}],"9RDXu":[function(require,module,exports) {
+const container = document.getElementById("root");
 const ajax = new XMLHttpRequest();
-const newsUrl = "https://api.hnpwa.com/v0/news/1.json";
-ajax.open("GET", newsUrl, false);
+const content = document.createElement("div");
+const NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
+const COMMENT_URL = "https://api.hnpwa.com/v0/item/@id.json";
+ajax.open("GET", NEWS_URL, false);
 ajax.send();
 // response 객체로 바꾸는 코드
-const news = JSON.parse(ajax.response);
+const newsFeed = JSON.parse(ajax.response);
 const ul = document.createElement("ul");
-for(let i = 0; i < news.length; i++){
-    //   let li = document.createElement(`<li>${newsFeed[i].title}</li>`);
+window.addEventListener("hashchange", function() {
+    // 주소
+    const id = location.hash.substring(1);
+    ajax.open("GET", COMMENT_URL.replace("@id", id), false);
+    ajax.send();
+    const newsContent = JSON.parse(ajax.response);
+    const title = document.createElement("h1");
+    title.innerHTML = newsContent.title;
+    content.appendChild(title);
+});
+for(let i = 0; i < newsFeed.length; i++){
+    const a = document.createElement("a");
     const li = document.createElement("li");
-    li.innerHTML = news[i].title;
+    const comment = newsFeed[i].comments_count;
+    const title = newsFeed[i].title;
+    a.href = `#${newsFeed[i].id}`;
+    a.innerHTML = `${title} - ${comment}`;
+    li.appendChild(a);
     ul.appendChild(li);
 }
-document.getElementById("root").appendChild(ul);
+container.appendChild(ul);
+container.appendChild(content);
 
 },{}]},["6Qd5F","9RDXu"], "9RDXu", "parcelRequire94c2")
 
