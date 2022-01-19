@@ -5,13 +5,13 @@ ajax.open("GET", newsUrl, false);
 ajax.send();
 
 // response 객체로 바꾸는 코드
-const newsFeed = JSON.parse(ajax.response);
+const news = JSON.parse(ajax.response);
 const ul = document.createElement("ul");
 
-for (let i = 0; i < newsFeed.length; i++) {
+for (let i = 0; i < news.length; i++) {
   //   let li = document.createElement(`<li>${newsFeed[i].title}</li>`);
   const li = document.createElement("li");
-  li.innerHTML = newsFeed[i].title;
+  li.innerHTML = news[i].title;
   ul.appendChild(li);
 }
 
