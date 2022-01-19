@@ -529,28 +529,38 @@ function getData(url) {
     ajax.send();
     return JSON.parse(ajax.response);
 }
-// response 객체로 바꾸는 코드
-const newsFeed = getData(NEWS_URL);
-const ul = document.createElement("ul");
-window.addEventListener("hashchange", function() {
+function newsFeed() {
+    const newsFeed1 = getData(NEWS_URL);
+    const newsList = [];
+    newsList.push("<ul>");
+    for(let i = 0; i < newsFeed1.length; i++)newsList.push(`
+    <li>
+        <a href=#${newsFeed1[i].id}>${newsFeed1[i].title} - ${newsFeed1[i].comments_count}</a> 
+    </li>
+  `);
+    newsList.push("</ul>");
+    container.innerHTML = newsList.join("");
+}
+function newsDetail() {
     // 주소
     const id = location.hash.substring(1);
     const newsContent = getData(CONTENT_URL.replace("@id", id));
-    const title = document.createElement("h1");
-    title.innerHTML = newsContent.title;
-    content.appendChild(title);
-});
-for(let i = 0; i < newsFeed.length; i++){
-    const div = document.createElement("div");
-    div.innerHTML = `
-    <li>
-        <a href=#${newsFeed[i].id}>${newsFeed[i].title} - ${newsFeed[i].comments_count}</a> 
-    </li>
-  `;
-    ul.appendChild(div.firstElementChild);
+    // 목록 삭제하기
+    container.innerHTML = "";
+    container.innerHTML = `
+    <h1>${newsContent.title}</h1>
+    <div>
+    <a href="#">Back To List</a>
+    </div>
+    `;
 }
-container.appendChild(ul);
-container.appendChild(content);
+function router() {
+    const routePath = location.hash;
+    if (routePath === "") newsFeed();
+    else newsDetail();
+}
+window.addEventListener("hashchange", router);
+router();
 
 },{}]},["6Qd5F","9RDXu"], "9RDXu", "parcelRequire94c2")
 
