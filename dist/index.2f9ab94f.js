@@ -535,20 +535,29 @@ function getData(url) {
 function newsFeed() {
     const newsFeed1 = getData(NEWS_URL);
     const newsList = [];
-    newsList.push("<ul>");
+    let template = `
+    <div class="container mx-auto p-4">
+        <h1>Hacker News</h1>
+        <ul>
+            {{__news_feed__}}
+        </ul>
+        <div>
+            <a href="#/page/{{__previous_page__}}">Previous</a>
+            <a href="#/page/{{__next_page__}}">Next</a>
+        </div>
+    </div>
+  `;
     for(let i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++)newsList.push(`
     <li>
         <a href="#/show/${newsFeed1[i].id}">${i + 1}.${newsFeed1[i].title} - ${newsFeed1[i].comments_count}</a> 
     </li>
   `);
-    newsList.push(`</ul>`);
-    newsList.push(`
-    <div>
-        <a href="#/page/${store.currentPage > 1 ? store.currentPage - 1 : store.currentPage}">Previous</a>
-        <a href="#/page/${store.currentPage < 3 ? store.currentPage + 1 : store.currentPage}">Next</a>
-    </div>
-  `);
-    container.innerHTML = newsList.join("");
+    template = template.replace("{{__news_feed__}}", newsList.join(""));
+    if (store.currentPage === 1) template = template.replace("Previous", "");
+    else template = template.replace("{{__previous_page__}}", store.currentPage > 1 ? store.currentPage - 1 : store.currentPage);
+    if (store.currentPage === 3) template = template.replace("Next", "");
+    else template = template.replace("{{__next_page__}}", store.currentPage < 3 ? store.currentPage + 1 : store.currentPage);
+    container.innerHTML = template;
 }
 function newsDetail() {
     // 주소
